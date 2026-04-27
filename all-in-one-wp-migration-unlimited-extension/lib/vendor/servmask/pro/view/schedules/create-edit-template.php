@@ -31,7 +31,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 
 <script type="text/html" id="schedule-event-template">
-	<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php?action=ai1wm_schedule_event_save' ) ); ?>" id="ai1wmve-schedule-event-form" class="ai1wm-clear">
+	<form method="post" action="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=ai1wm_schedule_event_save' ), 'ai1wm_schedule_event_save' ) ); ?>" id="ai1wmve-schedule-event-form" class="ai1wm-clear">
 		<input type="hidden" name="event_id" v-model="form.event_id">
 		<div class="ai1wm-event-fieldset">
 			<h2><?php _e( 'Event info', AI1WM_PLUGIN_NAME ); ?></h2>

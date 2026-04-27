@@ -82,10 +82,9 @@ class FrmAppController {
 		}
 
 		if ( FrmAppHelper::is_full_screen() ) {
-			$full_screen_on = self::get_full_screen_setting();
-			$add_class      = '';
+			$add_class = '';
 
-			if ( $full_screen_on ) {
+			if ( self::get_full_screen_setting() ) {
 				$add_class = ' frm-full-screen is-fullscreen-mode';
 
 				// Load the CSS for .is-fullscreen-mode.
@@ -738,14 +737,7 @@ class FrmAppController {
 		wp_register_script( 'bootstrap-multiselect', $plugin_url . '/js/bootstrap-multiselect.js', array( 'jquery', 'bootstrap_tooltip', 'popper' ), '2.0', true );
 
 		if ( ! class_exists( 'FrmTransHooksController', false ) ) {
-			/**
-			 * Gateway fields are included for add-on compatibility but we do not want it to be visible.
-			 * They do however need to be visible when the payments submodule is active.
-			 */
-			wp_add_inline_style(
-				'formidable-admin',
-				'#frm_builder_page li[data-ftype="gateway"] { display: none; }'
-			);
+			FrmTransLiteAppController::hide_gateway_fields_in_builder();
 		}
 
 		$page      = FrmAppHelper::simple_get( 'page', 'sanitize_title' );
@@ -874,10 +866,12 @@ class FrmAppController {
 	 * @return void
 	 */
 	private static function enqueue_global_settings_scripts( $page ) {
-		if ( 'formidable-settings' === $page ) {
-			wp_enqueue_style( 'wp-color-picker' );
-			wp_enqueue_script( 'formidable_settings' );
+		if ( 'formidable-settings' !== $page ) {
+			return;
 		}
+
+		wp_enqueue_style( 'wp-color-picker' );
+		wp_enqueue_script( 'formidable_settings' );
 	}
 
 	/**
@@ -1182,12 +1176,14 @@ class FrmAppController {
 	 * @return void
 	 */
 	private static function maybe_add_wp_site_health() {
-		if ( ! class_exists( 'WP_Site_Health' ) ) {
-			$wp_site_health_path = ABSPATH . 'wp-admin/includes/class-wp-site-health.php';
+		if ( class_exists( 'WP_Site_Health' ) ) {
+			return;
+		}
 
-			if ( file_exists( $wp_site_health_path ) ) {
-				require_once $wp_site_health_path;
-			}
+		$wp_site_health_path = ABSPATH . 'wp-admin/includes/class-wp-site-health.php';
+
+		if ( file_exists( $wp_site_health_path ) ) {
+			require_once $wp_site_health_path;
 		}
 	}
 
@@ -1586,8 +1582,7 @@ class FrmAppController {
 			return;
 		}
 
-		$user_id             = get_current_user_id();
-		$preferred_list_sort = get_user_meta( $user_id, $meta_key, true );
+		$preferred_list_sort = get_user_meta( get_current_user_id(), $meta_key, true );
 		$form_id             = FrmAppHelper::simple_get( 'form', 'absint' );
 
 		if ( is_array( $preferred_list_sort ) && $form_id && is_int( $form_id ) && isset( $preferred_list_sort[ $form_id ] ) ) {

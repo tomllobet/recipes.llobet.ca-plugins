@@ -44,7 +44,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					</div>
 				<?php endif; ?>
 
-				<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php?action=ai1wmue_settings' ) ); ?>">
+				<form method="post" action="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=ai1wmue_settings' ), 'ai1wmue_settings_save' ) ); ?>">
 
 					<article class="ai1wmue-article">
 						<h3><?php _e( 'Retention settings', AI1WMUE_PLUGIN_NAME ); ?></h3>

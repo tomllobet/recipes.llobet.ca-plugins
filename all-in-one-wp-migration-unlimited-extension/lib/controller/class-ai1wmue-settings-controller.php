@@ -47,6 +47,11 @@ class Ai1wmue_Settings_Controller {
 	}
 
 	public static function settings( $params = array() ) {
+		check_admin_referer( 'ai1wmue_settings_save' );
+		if ( ! current_user_can( 'export' ) ) {
+			wp_die( __( 'You are not allowed to perform this action.', AI1WMUE_PLUGIN_NAME ) );
+		}
+
 		ai1wm_setup_environment();
 
 		// Set params
